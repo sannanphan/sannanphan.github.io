@@ -25,12 +25,39 @@
   <link href='https://fonts.googleapis.com/css?family=Oswald:700' rel='stylesheet' type='text/css'>
 
 <style>  
+@media (min-width:1200px) {
+
  .navbar {
   position: fixed;
   top: 0;
   width: 100%;
 }
-</style> 
+
+  .navbar-collapse {
+    width: auto;
+    border-top: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .navbar-collapse.collapse {
+    display: block!important;
+    height: auto!important;
+    padding-bottom: 0;
+    overflow: visible!important;
+  }
+
+  .navbar-collapse.in {
+    overflow-y: visible;
+  }
+
+  .navbar-fixed-bottom .navbar-collapse,.navbar-fixed-top .navbar-collapse,.navbar-static-top .navbar-collapse {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+</style>
 </head>
 <body id="code">
 
