@@ -62,6 +62,12 @@
   color: #333;
   background-color: #fff;
 }  
+li {
+  color: #B21B16; /* bullet color */
+}
+li span {
+  color: #333; /* text color */
+}
 </style>
 </head>
 
@@ -87,16 +93,16 @@
 <div class="container" style="margin-top: 20px">
 	<div class="row">
 		<div class="col-md-6">    	
-			<h3 style="color:#B21B16">Code</h3><br>
+			<h3 style="color:#333">Code</h3><br>
 		</div>
 	</div>
 	<div class="row">
 		<!-- Projects -->
 		<div class="col-md-8">    	
-			<strong>Implicit-Association Test (IAT)</strong><br/>
+			<strong><font style="color:#B21B16">Implicit-Association Test (IAT)</font></strong><br/>
 			<ul>
-			<li><u>IAT inspired program to identify implicit ethnicity bias through "trolley dilemma" decisions.</u> [<a href="https://github.com/sannanphan/IAT">code</a>]</li>
-			<p>Timed basic trolley dillema with the possibility to assign specific ethnicity. Option to play the bridge version (or "fat man"). Written with OpenSesame. </p>
+			<li><span><strong>IAT-Trolley</strong> - <u> Program to identify implicit ethnicity bias through "trolley dilemma" decisions.</u> [<a href="https://github.com/sannanphan/IAT">code</a>]</span></li>
+			<p>Timed basic trolley dillema with the possibility to assign specific ethnicity. Option to play the bridge version (or "fat man"). Written with OpenSesame. Easily usable by surveyors on tablets or smartphone.</p>
 			</ul>
 		</div>
 		<div class="col-md-4">   
@@ -107,9 +113,9 @@
 	<div class="row">
 		<div class="col-md-8">    		
 			<br>
-			<strong>Stata package</strong><br/>
+			<strong><font style="color:#B21B16">Stata package</font></strong><br/>
 			<ul>
-			<li>  <strong> plot_poly</strong> - <u>Post estimation Stata function to plot polynomial dose-response.</u> [<a href="https://github.com/sannanphan/plot_poly">code</a>]</li>
+			<li><span><strong> plot_poly</strong> - <u>Post estimation Stata function to plot polynomial dose-response.</u> [<a href="https://github.com/sannanphan/plot_poly">code</a>]</span></li>
 			<p>Relies on Stata built-in <b>predictnl</b> function to compute marginal effect when the dose-response follows a polynomial form (of any order). Option to add an histogram of the underlying support. 
 			User can set the reference point and decides to plot either in-sample or out of the data support. The later is relevant for any counterfactual analysis and projected climate impact in particular.</p>
 			</ul>
