@@ -16,13 +16,33 @@
 
   gtag('config', 'UA-110290402-2');
 </script> 
+
   <title>Sébastien Annan-Phan</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="codebeautify.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="bootstrap.min.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Oswald:700" rel="stylesheet" type="text/css">  
+
+    
+<script>
+$("nav").show();
+
+$("html").mousemove(function( event ) {
+    $("nav").fadeOut();
+    myStopFunction();    
+    myFunction();
+
+});
+
+function myFunction() {
+    myVar = setTimeout(function(){
+        $("nav").show();
+    }, 3000);
+}
+</script>    
+    
 <style>  
 
   <!-- background-color: #f8f8f8; -->
@@ -50,7 +70,7 @@
   .navbar-fixed-bottom .navbar-collapse,.navbar-fixed-top .navbar-collapse,.navbar-static-top .navbar-collapse {
     padding-right: 0;
     padding-left: 0;
-  } 
+  }    
 }
  body {
   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
@@ -85,7 +105,6 @@
   float: right;
   margin-left: 5px;
 }
-
 .accordion.active:after {
   content: "\25BC"; /* Unicode character for "minus" sign (-) */
 }
@@ -98,8 +117,6 @@
   margin-bottom: 0 !important; 
 }
 	
-
-
 .container {
   padding-right: 15px;
   padding-left: 140px;
@@ -107,8 +124,6 @@
   margin-left: auto;
 }	
 	
-	
-
 @media (max-width:1000px) {
 	.container{
 	  padding-right: 15px;	
@@ -123,44 +138,47 @@
 
 }
 
-	
-/*	
-@media only screen and (max-width: 1700px) {
-  .navbar-brand{
-	visibility: hidden !important;
-  }
-}
-*/
-<!-- .brand { -->
-    <!-- position: relative; -->
-    <!-- left: 50%; -->
-    <!-- margin-left: -50px !important;  /* 50% of your logo width */ -->
-    <!-- display: block; -->
-<!-- } -->
+
 
 </style> 
+
 </head>
 
-
 <body>
-    <nav class="navbar navbar-inverse">
+    <nav style="width:100%;background: white; height:200px">
+        <font class="nav navbar-brand" style="font-size: 40px;color: black;position:absolute;left:50%;padding-top:80px; margin-left:-200px">Sébastien Annan-Phan</font>    
+    </nav>
+<!--
+    
+    <nav style="width:100%;background: #b2165a;height:5px">
+        <br>
+    </nav>     
+    <nav style="width:100%;background: #b24216;height:5px">
+        <br>
+    </nav> 
+    <nav style="width:100%;background: #B21B16;height:5px">
+        <br>
+    </nav>  
+-->    
+    <div class="navbar navbar-inverse">
             <div class="navbar-header">
-			<!-- style="margin-left: -350px; color: white; font-size: 23px" -->
-			<font class="navbar-brand" style="font-size: 16px; color: white;padding-left: 10px">Sébastien Annan-Phan</font>
+			<font class="navbar-brand" style="font-size: 16px; color: white;padding-left: 10px;">Sébastien Annan-Phan</font>
 			</div>
 		<div class="navbar-collapse">	
 			<div class="container" >
-			<ul class="nav navbar-nav" style="margin-left:-16px">
-              <li class="active"><a href="/" style="color:white"><b>Home</b></a></li>
+			<ul class="nav navbar-nav" style="margin-left:-16px;">
+              <li class="active"><a href="/" ><b>Home</b></a></li>
               <li><a href="publications.html">Research</a></li> 			  
               <li><a href="code.html">Code</a></li> 			  
               <li><a href="CV_SAP.pdf">CV</a></li> 
 			</ul>
 			</div>
 		</div>
-	</nav>
-  
-  <!-- Page Content -->
+    </div>
+
+
+      
+<!-- Page Content -->
     <div class="container cont-mob" style="margin-top: 50px">
             <!-- Entries Column -->
 		<div class="row">
@@ -235,9 +253,8 @@
             </div>
 		</div>	
 
-	</div>
+</div>
 	<br><br><br>
 
 </body>
-
 </html>
