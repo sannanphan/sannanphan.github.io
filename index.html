@@ -30,7 +30,7 @@
 $("nav").show();
 
 $("html").mousemove(function( event ) {
-    $("nav").fadeOut();
+    $("nav").fadeOut(6000);
     myStopFunction();    
     myFunction();
 
@@ -39,7 +39,7 @@ $("html").mousemove(function( event ) {
 function myFunction() {
     myVar = setTimeout(function(){
         $("nav").show();
-    }, 3000);
+    }, 1000);
 }
 </script>    
     
