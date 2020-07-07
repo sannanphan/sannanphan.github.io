@@ -62,6 +62,41 @@
   margin-left: auto;
 } 
 }
+    
+<!-- Accordion style -->
+.accordion{
+  all: unset;
+}
+.accordion {
+  background-color: white;
+  cursor: pointer;
+  padding: 14px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  transition: 0.4s;
+
+}
+.accordion:after {
+  content: '\25B6'; /* Unicode character for "plus" sign (+) */
+  font-size: 14px;
+  /*float:right;*/    
+  color: #B21B16;
+  margin-left: 5px;
+}
+.accordion.active:after {
+  content: "\25BC"; /* Unicode character for "minus" sign (-) */
+}
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  margin-bottom: 0 !important; 
+}
+	
  body {
   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
   font-size: 14px;
@@ -122,18 +157,32 @@
 		<!-- <div class="row" style="background:#f2f0ee; margin-left:0">			 -->
 		<h3 style="color:#222222">Publications</h3>
 		<font style="color:#B21B16">"The effect of large-scale anti-contagion policies on the COVID-19 pandemic"</font><br>
-		<font size="-1">Solomon Hsiang, Daniel Allen, Sébastien Annan-Phan, Kendon Bell, Ian Bollinger, Trinetta Chong, Hannah Druckenmiller, Luna Yue Huang, Andrew Hultgren, Emma Krasovich, Peiley Lau, Jaecheol Lee, Esther Rolf, Jeanette Tseng, and Tiffany Wu, <i><b>
-		<br>Nature</b> (forthcoming)</i><br>
-		<a href="https://www.nature.com/articles/s41586-020-2404-8" style="color:black"><u>Link to paper</u></a> <strong><b>|</strong></b>
-		<a href="http://www.globalpolicy.science/covid19" style="color:black"><u>dedicated webpage</u></a> (Global Policy Lab.) <strong><b>|</strong></b> 	
+		<button class="accordion" style="padding:0!important" id="acc1"><font size="-1">Solomon Hsiang, Daniel Allen, Sébastien Annan-Phan, Kendon Bell, Ian Bollinger, Trinetta Chong, Hannah Druckenmiller, Luna Yue Huang, Andrew Hultgren, Emma Krasovich, Peiley Lau, Jaecheol Lee, Esther Rolf, Jeanette Tseng, and Tiffany Wu, <i><b>
+            <br>Nature</b> (forthcoming)</i></font></button>
+        <div class="panel" style="border: none;background: #f2f0ee">
+          <p><font size="-1"><i><br> We evaluates the efficacy of anti-contagion policies designed to slow the spread of COVID-19. 
+          While the economic and social costs of these policies are highly visible the health benefits, in the form of infections and deaths that
+          would have occurred but are instead avoided or delayed, are unseen. In the absence of policy, we estimate that early infections of COVID-19 grow at a rate of roughly 38% per day. This implies a doubling time of approximately two days.</i><br>
+          <a href="FRA_03_25.jpg" target="_blank"><img class="img-responsive" src="FRA_03_25.jpg" alt="" style="border: 0px solid #ddd;
+          border-radius: 4px;"></a></font></p>
+        </div>
+        <font size="-1">
+		<a href="https://www.nature.com/articles/s41586-020-2404-8" style="color:black"><u>Link to paper</u></a> <strong><b>|</b></strong>
+		<a href="http://www.globalpolicy.science/covid19" style="color:black"><u>dedicated webpage</u></a> (Global Policy Lab.) <strong><b>|</b></strong> 	
 		<a href="http://www.globalpolicy.science/covid-coverage" style="color:black"><u>selected media coverage</u></a><br></font>	
 		<br>
 		<!-- </div> -->
-		<br><font size = "+1" style="color:#222222" ><i>Pre-PhD</font></i><br>
 		<font style="color:#B21B16">"Market Integration and Wind Generation: An Empirical Analysis of the Impact of Wind Generation on Cross-Border Power Prices"</font><br>
-		<font size="-1">Sébastien Annan-Phan, Fabien Roques,<i><b>The Energy Journal</b> 39.3 (2018)</i><br>
-		<a href="https://www.iaee.org/en/publications/ejarticle.aspx?id=3075" style="color:black"><u>Link to paper</u></a><br></font>
+		
+        <button class="accordion" style="padding:0!important" id="acc2"><font size="-1">Sébastien Annan-Phan, Fabien Roques,<i><b>The Energy Journal</b> 39.3 (2018)</i></font></button>
+            <div class="panel" style="border: none;background: #f2f0ee">
+              <p><font size="-1"><i><br> We estimated the effect of intermittent wind generation in France and Germany on electricity prices and the impact of increasing market integration in that context. Wind generation is depressing prices and increasing volatility both domestically and in the neighboring market. With a larger interconnection, the effect of wind generation on price variance is mitigated domestically and "exported" to the neighboring market, although the net effect of market integration is an overall decrease in price volatility in the two markets.</i> </font></p>
+              <a href="SAP_roques.png" target="_blank"><img class="img-responsive" src="SAP_roques.png" alt="" style="border: 0px solid #ddd;
+              border-radius: 4px;"></a><br>
+            </div>        
+		<font size="-1"><a href="https://www.iaee.org/en/publications/ejarticle.aspx?id=3075" style="color:black"><u>Link to paper</u></a><br></font>
 		<br>
+		<br><font size = "+1" style="color:#222222" ><i>Pre-PhD</i></font><br>        
 		<font style="color:#B21B16">"The Impacts of Variable Renewable Production and Market Coupling on the Convergence of French and German Electricity Prices"</font><br>
 		<font size="-1">Jan-Horst Keppler, Sébastien Phan, Yannick Le Pen,<i><b>The Energy Journal</b> 37.3 (2016)</i><br>
 		<a href="https://www.iaee.org/en/publications/ejarticle.aspx?id=2788" style="color:black"><u>Link to paper</u></a><br></font>	
@@ -142,8 +191,8 @@
 	</div>	
 	</div>
 </div>
-	<font style="color:#868d96;font-size:0.7em; float:left;padding-left: 10px">&#x00A9 2020 Sébastien Annan-Phan, inspired by <a href="https://github.com/mavroudisv/plain-academic" target="_blank"><u>Plain Academic</u></a></font>
-
+	<font style="color:#868d96;font-size:0.7em; float:left;padding-left: 10px">&#x00A9 2020 Sébastien Annan-Phan, inspired by <a href="https://github.com/mavroudisv/plain-academic" target="_blank"><u>Plain Academic</u></a></font> <p id="demo"></p>
+<script src="accordeon.js"></script>
 </body>
 
 </html>
