@@ -1,5 +1,5 @@
 // JavaScript Document
 $("nav").show();
 $("html").mousemove(function( event ) {
-    $("nav").fadeOut(1900);
+    $("nav").fadeOut(2300);
 });
