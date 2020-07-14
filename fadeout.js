@@ -7,3 +7,8 @@ $("html").mousemove(function( event ){
 }); */
 $("nav").show();
 $("nav").fadeOut(4000);
+$(function () {
+  $(document).scroll(function () {
+  $("nav").fadeOut(4000);
+  });
+});

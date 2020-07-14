@@ -7,3 +7,8 @@ $("html").mousemove(function( event ) {
 */
 $("div2").hide();
 $("div2").delay(3000).fadeIn(3900); 
+$(function () {
+  $(document).scroll(function () {
+  $("div2").delay(3000).fadeIn(3900); 
+  });
+});
