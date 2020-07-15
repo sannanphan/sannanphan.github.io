@@ -7215,6 +7215,7 @@ button.close {
   .navbar-header{
 	float: right;
   }
+  .Name_mob{display:none}    
 }    
 
 a.icn:hover {color: #B54451!important;}
@@ -7236,4 +7237,45 @@ li.icn:hover {color: #B54451!important;}
 .icn-hov:hover .img-top {
     display: inline;
 }    
+
+.accordion{
+  all: unset;
+}
+.accordion {
+  background-color: white;
+  cursor: pointer;
+  padding-top: 14px;
+  padding-left: 14px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  transition: 0.4s;
+
+}
+.accordion:after {
+  content: '\25B6'; /* Unicode character for "plus" sign (+) */
+  font-size: 18px;
+  color: #B21B16;
+  /*float: right;*/
+  margin-left: 5px;
+}
+.accordion:hover:after {
+  content: '\25B6'; /* Unicode character for "plus" sign (+) */
+  font-size: 18px;
+  color: black;
+  /*float: right;*/
+  margin-left: 5px;
+}   
+.accordion.active:after {
+  content: "\25BC"; /* Unicode character for "minus" sign (-) */
+}
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  margin-bottom: 0 !important; 
+}
     
