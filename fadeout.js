@@ -7,15 +7,11 @@ $("html").mousemove(function( event ){
 }); */
 
 $("nav").show();
-var fade = false;
-$(document).scroll(function() {
-    var fade = true;
-});
-$("html").mousemove(function(){
-    var fade = true;
-});
-
-//$("nav").fadeOut(4000);
-if (fade = true) {
+window.onscroll = function () {  
   $("nav").fadeOut(3000);
-}
+};
+
+
+$("html").mousemove(function(){
+  $("nav").fadeOut(3000);
+});

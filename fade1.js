@@ -8,16 +8,10 @@ $("html").mousemove(function( event ) {
 
 if ($(window).width() > 480) {
     $("div2").hide();
-    var fade_in = false;
-    /*
-    $(document).scroll(function () {
-        var fade_in = true;
-    });
-    */
+    window.onscroll = function () {  
+        $("div2").delay(1500).fadeIn(3000); 
+    };
     $("html").mousemove(function(){
-        var fade_in = true;
+        $("div2").delay(1500).fadeIn(3000); 
     });
-    if (fade_in = true){
-        $("div2").fadeIn(3000); 
-    }
 }
