@@ -6,12 +6,13 @@ $("html").mousemove(function( event ){
     $("nav").fadeOut(2300);
 }); */
 
+
 $("nav").show();
-window.onscroll = function () {  
-  $("nav").fadeOut(3000);
+window.onscroll = function () { 
+  $("nav").fadeOut(2500);
 };
 
 
 $("html").mousemove(function(){
-  $("nav").fadeOut(3000);
+  $("nav").fadeOut(2500);
 });
