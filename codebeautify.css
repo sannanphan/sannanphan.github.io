@@ -7220,23 +7220,25 @@ button.close {
 
 a.icn:hover {color: #B54451!important;}
 li.icn:hover {color: #B54451!important;}
+
 .icn-hov{
-        width: 39px;
         height: 0px;
         position: relative;
-        display: inline-block;
+        display: inline;
         margin-right: 2px;        
-}    
+} 
+/*
 .icn-hov .img-top {
     display: none;
-    position: absolute;
     top: 0;
     left: 0;
     z-index: 99;
 }
 .icn-hov:hover .img-top {
     display: inline;
-}    
+}  
+*/
+
 
 .accordion{
   all: unset;
