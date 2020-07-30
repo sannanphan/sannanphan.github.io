@@ -4986,7 +4986,7 @@ select[multiple].input-group-sm>.form-control,select[multiple].input-group-sm>.i
 
 .navbar-inverse .navbar-nav>li>a:focus,.navbar-inverse .navbar-nav>li>a:hover {
   color: #fff;
-  background-color: #080808;
+  background-color: #222;
 }
 
 .navbar-inverse .navbar-nav>.active>a,.navbar-inverse .navbar-nav>.active>a:focus,.navbar-inverse .navbar-nav>.active>a:hover {
@@ -7280,4 +7280,17 @@ li.icn:hover {color: #B54451!important;}
   transition: max-height 0.3s ease-out;
   margin-bottom: 0 !important; 
 }
-    
+
+div .undernav>u {
+text-decoration:none; 
+border-bottom: 2.5px solid #B21B16;
+}
+
+div .undernav_inac>u {
+text-decoration:none; 
+border-bottom: 2.5px solid #222;
+}
+div .undernav_inac>u:hover {
+text-decoration:none; 
+border-bottom: 2.5px solid #B21B16;
+}
