@@ -9,10 +9,10 @@ $("html").mousemove(function( event ){
 
 $("nav").show();
 window.onscroll = function () { 
-  $("nav").fadeOut(2000);
+  $("nav").fadeOut(2300);
 };
 
 
 $("html").mousemove(function(){
-  $("nav").fadeOut(2000);
+  $("nav").fadeOut(2300);
 });
