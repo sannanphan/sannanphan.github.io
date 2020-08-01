@@ -7298,3 +7298,16 @@ border-bottom: 2.5px solid #B21B16;
 .navbar-inverse .navbar-nav>li>a:hover .undernav_inac>u {
 border-bottom: 2.5px solid #B21B16;
 }
+
+.frame {position:relative;}
+.frame:before, .frame:after, .frame>:first-child:before, .frame>:first-child:after {
+    position:absolute;
+    width:40px; height: 40px;
+    border-color:#B21B16;
+    border-style:solid;
+    content: ' ';
+}
+.frame:before {top:0;left:0;border-width: 2.5px 0 0 2.5px}
+.frame:after {top:0;right:0; display:none}
+.frame>:first-child:before {bottom:0;right:0;border-width: 0 2.5px 2.5px 0}
+.frame>:first-child:after {bottom:0;left:0; display:none}
