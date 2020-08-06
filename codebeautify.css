@@ -7307,11 +7307,11 @@ border-bottom: 2.5px solid #B21B16;
     border-style:solid;
     content: ' ';
 }
-.frame:before {top:0;left:0;border-width: 1px 0 0 1px}
-.frame:after {top:0;right:0; border-width: 1px 1px 0 0}
+.frame:before {top:0;left:0;border-width: 2px 0 0 2px}
+.frame:after {top:0;right:0; border-width: 2px 2px 0 0}
 
-.frame>:first-child:before {bottom:0;right:0;border-width: 0 1px 1px 0}
-.frame>:first-child:after {bottom:0;left:0; border-width: 0 0 1px 1px }
+.frame>:first-child:before {bottom:0;right:0;border-width: 0 2px 2px 0}
+.frame>:first-child:after {bottom:0;left:0; border-width: 0 0 2px 2px }
 
 
 .frame:hover:before, .frame:hover:after, .frame:hover>:first-child:before, .frame:hover>:first-child:after {border-color:#B21B16}
