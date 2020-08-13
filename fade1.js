@@ -9,9 +9,9 @@ $("html").mousemove(function( event ) {
 if ($(window).width() > 480) {
     $("div2").hide();
     window.onscroll = function () {  
-        $("div2").delay(800).fadeIn(2500); 
+        $("div2").delay(800).fadeIn(3500); 
     };
     $("html").mousemove(function(){
-        $("div2").delay(800).fadeIn(2500); 
+        $("div2").delay(800).fadeIn(3500); 
     });
 }
