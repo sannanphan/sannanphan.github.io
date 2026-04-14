@@ -389,6 +389,122 @@ body {
   .today-card  { order: -1; }
   .app-header  { flex-direction: column; align-items: flex-start; }
 }
+
+/* ── PIN overlay ───────────────────────────── */
+
+#pin-overlay {
+  position: fixed;
+  inset: 0;
+  background: #f4f4f6;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pin-overlay.hidden {
+  display: none;
+}
+
+.pin-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #e3e3e3;
+  padding: 36px 32px 28px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,.08);
+}
+
+.pin-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 6px;
+}
+
+.pin-subtitle {
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 28px;
+}
+
+.pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  transition: background .12s, border-color .12s;
+}
+
+.pin-dot.filled {
+  background: #7C3AED;
+  border-color: #7C3AED;
+}
+
+.pin-dot.error {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.pin-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pin-btn {
+  background: #f7f7f9;
+  border: 1px solid #ebebeb;
+  border-radius: 10px;
+  height: 56px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #111;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .1s, transform .08s;
+  user-select: none;
+}
+
+.pin-btn:hover  { background: #efefef; }
+.pin-btn:active { background: #e5e5e5; transform: scale(.95); }
+
+.pin-btn.del {
+  font-size: 16px;
+  color: #888;
+}
+
+.pin-btn.empty {
+  background: none;
+  border-color: transparent;
+  cursor: default;
+  pointer-events: none;
+}
+
+.pin-error-msg {
+  font-size: 12.5px;
+  color: #dc2626;
+  min-height: 18px;
+  margin-top: 6px;
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-6px); }
+  80%      { transform: translateX(6px); }
+}
 </style>
 </head>
 
@@ -474,8 +590,87 @@ body {
   </div>
 </div>
 
+<!-- PIN overlay -->
+<div id="pin-overlay">
+  <div class="pin-card">
+    <div class="pin-title">School Pickup</div>
+    <div class="pin-subtitle">Enter your PIN</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-btn" onclick="pinKey('1')">1</button>
+      <button class="pin-btn" onclick="pinKey('2')">2</button>
+      <button class="pin-btn" onclick="pinKey('3')">3</button>
+      <button class="pin-btn" onclick="pinKey('4')">4</button>
+      <button class="pin-btn" onclick="pinKey('5')">5</button>
+      <button class="pin-btn" onclick="pinKey('6')">6</button>
+      <button class="pin-btn" onclick="pinKey('7')">7</button>
+      <button class="pin-btn" onclick="pinKey('8')">8</button>
+      <button class="pin-btn" onclick="pinKey('9')">9</button>
+      <button class="pin-btn empty"></button>
+      <button class="pin-btn" onclick="pinKey('0')">0</button>
+      <button class="pin-btn del" onclick="pinDel()">⌫</button>
+    </div>
+    <div class="pin-error-msg" id="pin-error"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ── PIN ────────────────────────────────────────────────
+const PIN = '0001';  // ← change this to your PIN
+
+var pinEntered = '';
+
+function pinKey(digit) {
+  if (pinEntered.length >= 4) return;
+  pinEntered += digit;
+  updatePinDots();
+  if (pinEntered.length === 4) checkPin();
+}
+
+function pinDel() {
+  pinEntered = pinEntered.slice(0, -1);
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+}
+
+function updatePinDots(state) {
+  for (var i = 0; i < 4; i++) {
+    var dot = document.getElementById('pd' + i);
+    dot.className = 'pin-dot';
+    if (state === 'error') dot.classList.add('error');
+    else if (i < pinEntered.length) dot.classList.add('filled');
+  }
+}
+
+function checkPin() {
+  if (pinEntered === PIN) {
+    sessionStorage.setItem('pickup_auth', '1');
+    document.getElementById('pin-overlay').classList.add('hidden');
+    fetchAll();
+  } else {
+    updatePinDots('error');
+    document.getElementById('pin-error').textContent = 'Incorrect PIN';
+    document.querySelector('.pin-card').style.animation = 'shake .35s ease';
+    setTimeout(function() {
+      document.querySelector('.pin-card').style.animation = '';
+      pinEntered = '';
+      updatePinDots();
+      document.getElementById('pin-error').textContent = '';
+    }, 400);
+  }
+}
+
+// Check if already unlocked this session
+if (sessionStorage.getItem('pickup_auth') === '1') {
+  document.getElementById('pin-overlay').classList.add('hidden');
+}
+
 // ── Supabase ───────────────────────────────────────────
 const { createClient } = supabase;
 const db = createClient(
@@ -698,7 +893,8 @@ document.getElementById('next-btn').addEventListener('click', function() {
 document.getElementById('today-month').textContent = NOW.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
 document.getElementById('today-day').textContent   = NOW.toLocaleDateString('en-US', { weekday:'long' });
 
-fetchAll();  // load from Supabase on startup
+// fetchAll() is called by PIN unlock (or immediately if already unlocked this session)
+if (sessionStorage.getItem('pickup_auth') === '1') fetchAll();
 </script>
 
 </body>
