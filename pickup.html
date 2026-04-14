@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>School Pickup</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f4f4f6;
+  min-height: 100vh;
+  color: #1a1a1a;
+}
+
+.app {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+/* ── Header / Counters ─────────────────────── */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.app-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+}
+
+.counters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #e3e3e3;
+  border-radius: 999px;
+  padding: 6px 16px 6px 10px;
+  font-size: 14px;
+}
+
+.dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-s { background: #7C3AED; }
+.dot-n { background: #059669; }
+
+.counter strong { font-weight: 600; }
+.proj { color: #999; font-size: 12.5px; }
+
+/* ── Two-column layout ─────────────────────── */
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── Calendar card ─────────────────────────── */
+
+.cal-card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #e3e3e3;
+  padding: 22px;
+}
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.cal-nav-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 30px; height: 30px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background .12s;
+}
+.cal-nav-btn:hover { background: #f2f2f2; }
+
+.cal-month {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+}
+
+.cal-dow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 5px;
+}
+.cal-dow > div {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #bbb;
+  padding: 3px 0;
+}
+.cal-dow .wd { color: #bbb; }
+.cal-dow .we { color: #ddd; }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.cal-cell {
+  aspect-ratio: 1;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  color: #444;
+  transition: transform .1s, filter .1s;
+  user-select: none;
+  position: relative;
+}
+
+.cal-cell:not(.empty):hover {
+  filter: brightness(.9);
+  transform: scale(1.08);
+  z-index: 1;
+}
+
+.cal-cell.empty { cursor: default; pointer-events: none; }
+.cal-cell.weekend { color: #ccc; }
+
+.cal-cell.today {
+  outline: 2.5px solid #222;
+  outline-offset: 1px;
+  font-weight: 700;
+  color: #111;
+}
+
+/* Confirmed (past/today) */
+.cal-cell.confirmed-sebastien { background: #7C3AED; color: white; border-color: #7C3AED; }
+.cal-cell.confirmed-sebastien.today { outline-color: #4C1D95; }
+.cal-cell.confirmed-najwa { background: #059669; color: white; border-color: #059669; }
+.cal-cell.confirmed-najwa.today { outline-color: #064E3B; }
+
+/* Projected (future) — hatched */
+.cal-cell.projected-sebastien {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(124,58,237,.2) 0px, rgba(124,58,237,.2) 3px,
+    #fff 3px, #fff 8px
+  );
+  border-color: rgba(124,58,237,.5);
+  color: #7C3AED;
+}
+.cal-cell.projected-najwa {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(5,150,105,.2) 0px, rgba(5,150,105,.2) 3px,
+    #fff 3px, #fff 8px
+  );
+  border-color: rgba(5,150,105,.5);
+  color: #059669;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #f0f0f0;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #888;
+}
+.legend-swatch {
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.ls-cs { background: #7C3AED; }
+.ls-cn { background: #059669; }
+.ls-ps {
+  background-image: repeating-linear-gradient(135deg,rgba(124,58,237,.25) 0px,rgba(124,58,237,.25) 3px,#fff 3px,#fff 8px);
+  border: 1px solid rgba(124,58,237,.5);
+}
+.ls-pn {
+  background-image: repeating-linear-gradient(135deg,rgba(5,150,105,.25) 0px,rgba(5,150,105,.25) 3px,#fff 3px,#fff 8px);
+  border: 1px solid rgba(5,150,105,.5);
+}
+
+/* ── Today card ────────────────────────────── */
+
+.today-card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #e3e3e3;
+  padding: 22px 18px;
+}
+
+.today-label-month {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 2px;
+}
+.today-label-day {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 18px;
+  line-height: 1.2;
+}
+
+.today-prompt {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 12px;
+}
+
+.today-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.btn-s, .btn-n {
+  border: none;
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s, transform .1s, box-shadow .15s;
+  font-family: inherit;
+  text-align: center;
+}
+.btn-s:hover, .btn-n:hover { opacity: .87; transform: translateY(-1px); }
+.btn-s:active, .btn-n:active { transform: none; }
+.btn-s { background: #7C3AED; color: white; }
+.btn-n { background: #059669; color: white; }
+.btn-s.active-btn { box-shadow: 0 0 0 3px rgba(124,58,237,.35); }
+.btn-n.active-btn { box-shadow: 0 0 0 3px rgba(5,150,105,.35); }
+
+.today-status {
+  min-height: 20px;
+  font-size: 13px;
+  text-align: center;
+  color: #555;
+}
+
+/* ── Modal ─────────────────────────────────── */
+
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+.modal-bg.open { display: flex; }
+
+.modal-card {
+  background: white;
+  border-radius: 16px;
+  padding: 26px 22px 20px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.22);
+  animation: pop .18s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(.92); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.modal-date {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 4px;
+}
+.modal-prompt {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+.modal-btns {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.modal-btns .btn-s, .modal-btns .btn-n { flex: 1; padding: 10px 8px; font-size: 13.5px; }
+
+.recurring-wrap {
+  display: none;
+  background: #f5f2ff;
+  border: 1px solid #ddd6fe;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+.recurring-wrap label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+}
+.recurring-wrap input[type=checkbox] {
+  accent-color: #7C3AED;
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+.btn-clear {
+  background: none; border: none;
+  font-size: 12.5px; color: #dc2626;
+  cursor: pointer; padding: 0;
+  font-family: inherit;
+  visibility: hidden;
+}
+.btn-clear:hover { text-decoration: underline; }
+.btn-cancel {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 5px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #555;
+  font-family: inherit;
+}
+.btn-cancel:hover { background: #f5f5f5; }
+
+/* ── Responsive ────────────────────────────── */
+
+@media (max-width: 680px) {
+  .main-layout { grid-template-columns: 1fr; }
+  .today-card  { order: -1; }
+  .app-header  { flex-direction: column; align-items: flex-start; }
+}
+
+/* ── PIN overlay ───────────────────────────── */
+
+#pin-overlay {
+  position: fixed;
+  inset: 0;
+  background: #f4f4f6;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pin-overlay.hidden {
+  display: none;
+}
+
+.pin-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #e3e3e3;
+  padding: 36px 32px 28px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,.08);
+}
+
+.pin-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 6px;
+}
+
+.pin-subtitle {
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 28px;
+}
+
+.pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  transition: background .12s, border-color .12s;
+}
+
+.pin-dot.filled {
+  background: #7C3AED;
+  border-color: #7C3AED;
+}
+
+.pin-dot.error {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.pin-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pin-btn {
+  background: #f7f7f9;
+  border: 1px solid #ebebeb;
+  border-radius: 10px;
+  height: 56px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #111;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .1s, transform .08s;
+  user-select: none;
+}
+
+.pin-btn:hover  { background: #efefef; }
+.pin-btn:active { background: #e5e5e5; transform: scale(.95); }
+
+.pin-btn.del {
+  font-size: 16px;
+  color: #888;
+}
+
+.pin-btn.empty {
+  background: none;
+  border-color: transparent;
+  cursor: default;
+  pointer-events: none;
+}
+
+.pin-error-msg {
+  font-size: 12.5px;
+  color: #dc2626;
+  min-height: 18px;
+  margin-top: 6px;
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-6px); }
+  80%      { transform: translateX(6px); }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="app-header">
+    <div class="app-title">School Pickup</div>
+    <div class="counters">
+      <div class="counter">
+        <span class="dot dot-s"></span>
+        <span>Sébastien:&nbsp;<strong id="count-s">0</strong><span id="proj-s" class="proj"></span></span>
+      </div>
+      <div class="counter">
+        <span class="dot dot-n"></span>
+        <span>Najwa:&nbsp;<strong id="count-n">0</strong><span id="proj-n" class="proj"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+
+    <!-- Calendar -->
+    <div class="cal-card">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" id="prev-btn">&#8249;</button>
+        <span class="cal-month" id="month-label"></span>
+        <button class="cal-nav-btn" id="next-btn">&#8250;</button>
+      </div>
+      <div class="cal-dow">
+        <div class="wd">Mon</div>
+        <div class="wd">Tue</div>
+        <div class="wd">Wed</div>
+        <div class="wd">Thu</div>
+        <div class="wd">Fri</div>
+        <div class="we">Sat</div>
+        <div class="we">Sun</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-swatch ls-cs"></div>Sébastien (done)</div>
+        <div class="legend-item"><div class="legend-swatch ls-cn"></div>Najwa (done)</div>
+        <div class="legend-item"><div class="legend-swatch ls-ps"></div>Sébastien (planned)</div>
+        <div class="legend-item"><div class="legend-swatch ls-pn"></div>Najwa (planned)</div>
+      </div>
+    </div>
+
+    <!-- Today -->
+    <div class="today-card">
+      <div class="today-label-month" id="today-month"></div>
+      <div class="today-label-day"   id="today-day"></div>
+      <div class="today-prompt">Who's doing today's pickup?</div>
+      <div class="today-btns">
+        <button class="btn-s" id="today-btn-s" onclick="assignToday('sebastien')">Sébastien</button>
+        <button class="btn-n" id="today-btn-n" onclick="assignToday('najwa')">Najwa</button>
+      </div>
+      <div class="today-status" id="today-status"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-date"   id="modal-date"></div>
+    <div class="modal-prompt" id="modal-prompt"></div>
+    <div class="modal-btns">
+      <button class="btn-s" onclick="modalAssign('sebastien')">Sébastien</button>
+      <button class="btn-n" onclick="modalAssign('najwa')">Najwa</button>
+    </div>
+    <div class="recurring-wrap" id="recurring-wrap">
+      <label>
+        <input type="checkbox" id="recurring-cb">
+        Recurring weekly (up to 2 months)
+      </label>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-clear"  id="clear-btn"  onclick="modalClear()">Remove assignment</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN overlay -->
+<div id="pin-overlay">
+  <div class="pin-card">
+    <div class="pin-title">School Pickup</div>
+    <div class="pin-subtitle">Enter your PIN</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-btn" onclick="pinKey('1')">1</button>
+      <button class="pin-btn" onclick="pinKey('2')">2</button>
+      <button class="pin-btn" onclick="pinKey('3')">3</button>
+      <button class="pin-btn" onclick="pinKey('4')">4</button>
+      <button class="pin-btn" onclick="pinKey('5')">5</button>
+      <button class="pin-btn" onclick="pinKey('6')">6</button>
+      <button class="pin-btn" onclick="pinKey('7')">7</button>
+      <button class="pin-btn" onclick="pinKey('8')">8</button>
+      <button class="pin-btn" onclick="pinKey('9')">9</button>
+      <button class="pin-btn empty"></button>
+      <button class="pin-btn" onclick="pinKey('0')">0</button>
+      <button class="pin-btn del" onclick="pinDel()">⌫</button>
+    </div>
+    <div class="pin-error-msg" id="pin-error"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── PIN ────────────────────────────────────────────────
+const PIN = '0001';  // ← change this to your PIN
+
+var pinEntered = '';
+
+function pinKey(digit) {
+  if (pinEntered.length >= 4) return;
+  pinEntered += digit;
+  updatePinDots();
+  if (pinEntered.length === 4) checkPin();
+}
+
+function pinDel() {
+  pinEntered = pinEntered.slice(0, -1);
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+}
+
+function updatePinDots(state) {
+  for (var i = 0; i < 4; i++) {
+    var dot = document.getElementById('pd' + i);
+    dot.className = 'pin-dot';
+    if (state === 'error') dot.classList.add('error');
+    else if (i < pinEntered.length) dot.classList.add('filled');
+  }
+}
+
+function checkPin() {
+  if (pinEntered === PIN) {
+    sessionStorage.setItem('pickup_auth', '1');
+    document.getElementById('pin-overlay').classList.add('hidden');
+    fetchAll();
+  } else {
+    updatePinDots('error');
+    document.getElementById('pin-error').textContent = 'Incorrect PIN';
+    document.querySelector('.pin-card').style.animation = 'shake .35s ease';
+    setTimeout(function() {
+      document.querySelector('.pin-card').style.animation = '';
+      pinEntered = '';
+      updatePinDots();
+      document.getElementById('pin-error').textContent = '';
+    }, 400);
+  }
+}
+
+// Check if already unlocked this session
+if (sessionStorage.getItem('pickup_auth') === '1') {
+  document.getElementById('pin-overlay').classList.add('hidden');
+}
+
+// ── Supabase ───────────────────────────────────────────
+const { createClient } = supabase;
+const db = createClient(
+  'https://wcbvolyegcqbxxnqczao.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjYnZvbHllZ2NxYnh4bnFjemFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxODUyNTksImV4cCI6MjA5MTc2MTI1OX0.4IiGKUBIdNtNQBFuC2LqhT5slPu0FYaYfaKQeUhczG0'
+);
+
+// ── Helpers ────────────────────────────────────────────
+const NOW = new Date();
+NOW.setHours(0, 0, 0, 0);
+
+function pad(n) { return String(n).padStart(2, '0'); }
+function toStr(d) { return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+
+const todayStr = toStr(NOW);
+
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+
+let viewYear     = NOW.getFullYear();
+let viewMonth    = NOW.getMonth();
+let modalDateStr = null;
+let cache        = {};   // { "2026-04-14": "sebastien", ... }
+
+// ── Data layer ─────────────────────────────────────────
+
+async function fetchAll() {
+  setLoading(true);
+  const { data, error } = await db.from('pickups').select('date, person');
+  setLoading(false);
+  if (error) { showError(error.message); return; }
+  cache = {};
+  data.forEach(function(row) { cache[row.date] = row.person; });
+  renderCalendar();
+}
+
+async function upsert(dateStr, person) {
+  // Delete first (handles case where unique constraint isn't set)
+  await db.from('pickups').delete().eq('date', dateStr);
+  const { error } = await db.from('pickups').insert({ date: dateStr, person: person });
+  if (error) { showError(error.message); return; }
+  cache[dateStr] = person;
+  renderCalendar();
+}
+
+async function remove(dateStr) {
+  const { error } = await db.from('pickups').delete().eq('date', dateStr);
+  if (error) { showError(error.message); return; }
+  delete cache[dateStr];
+  renderCalendar();
+}
+
+async function upsertMany(entries) {
+  // entries: [{ date, person }, ...]
+  const dates = entries.map(function(e) { return e.date; });
+  await db.from('pickups').delete().in('date', dates);
+  const { error } = await db.from('pickups').insert(entries);
+  if (error) { showError(error.message); return; }
+  entries.forEach(function(e) { cache[e.date] = e.person; });
+  renderCalendar();
+}
+
+// ── UI helpers ─────────────────────────────────────────
+
+function setLoading(on) {
+  document.getElementById('cal-grid').style.opacity = on ? '0.4' : '1';
+}
+
+function showError(msg) {
+  console.error('Supabase error:', msg);
+  // Surface briefly in the today-status area
+  var el = document.getElementById('today-status');
+  el.innerHTML = '<span style="color:#dc2626">Error: ' + msg + '</span>';
+  setTimeout(function() { refreshTodayStatus(); }, 4000);
+}
+
+// ── Counters ───────────────────────────────────────────
+
+function updateCounters() {
+  var sc = 0, nc = 0, sp = 0, np = 0;
+  Object.keys(cache).forEach(function(date) {
+    var person = cache[date];
+    if (date <= todayStr) { person === 'sebastien' ? sc++ : nc++; }
+    else                  { person === 'sebastien' ? sp++ : np++; }
+  });
+  document.getElementById('count-s').textContent = sc;
+  document.getElementById('count-n').textContent = nc;
+  document.getElementById('proj-s').textContent  = sp > 0 ? ' (projected: ' + (sc+sp) + ')' : '';
+  document.getElementById('proj-n').textContent  = np > 0 ? ' (projected: ' + (nc+np) + ')' : '';
+}
+
+// ── Calendar ───────────────────────────────────────────
+
+function renderCalendar() {
+  document.getElementById('month-label').textContent = MONTHS[viewMonth] + ' ' + viewYear;
+
+  var firstDay = new Date(viewYear, viewMonth, 1);
+  var lastDay  = new Date(viewYear, viewMonth + 1, 0);
+  var startDow = firstDay.getDay();
+  startDow = startDow === 0 ? 6 : startDow - 1; // Mon-first
+
+  var grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  for (var i = 0; i < startDow; i++) {
+    var empty = document.createElement('div');
+    empty.className = 'cal-cell empty';
+    grid.appendChild(empty);
+  }
+
+  for (var d = 1; d <= lastDay.getDate(); d++) {
+    var dateStr = viewYear + '-' + pad(viewMonth+1) + '-' + pad(d);
+    var cell = document.createElement('div');
+    cell.className = 'cal-cell';
+    cell.textContent = d;
+
+    var dow = new Date(viewYear, viewMonth, d).getDay();
+    if (dow === 0 || dow === 6) cell.classList.add('weekend');
+    if (dateStr === todayStr)   cell.classList.add('today');
+
+    var person = cache[dateStr];
+    if (person) {
+      cell.classList.add(dateStr > todayStr ? 'projected-' + person : 'confirmed-' + person);
+    }
+
+    cell.addEventListener('click', (function(ds) {
+      return function() { openModal(ds); };
+    })(dateStr));
+
+    grid.appendChild(cell);
+  }
+
+  updateCounters();
+  refreshTodayStatus();
+}
+
+// ── Today panel ────────────────────────────────────────
+
+function refreshTodayStatus() {
+  var person   = cache[todayStr];
+  var statusEl = document.getElementById('today-status');
+  document.getElementById('today-btn-s').classList.toggle('active-btn', person === 'sebastien');
+  document.getElementById('today-btn-n').classList.toggle('active-btn', person === 'najwa');
+
+  if      (person === 'sebastien') statusEl.innerHTML = '<span style="color:#7C3AED;font-weight:600">Sébastien</span> is doing today\'s pickup.';
+  else if (person === 'najwa')     statusEl.innerHTML = '<span style="color:#059669;font-weight:600">Najwa</span> is doing today\'s pickup.';
+  else                             statusEl.textContent = 'No one assigned yet.';
+}
+
+function assignToday(person) {
+  if (cache[todayStr] === person) {
+    remove(todayStr);
+  } else {
+    upsert(todayStr, person);
+  }
+}
+
+// ── Modal ──────────────────────────────────────────────
+
+function openModal(dateStr) {
+  modalDateStr = dateStr;
+  var isFuture = dateStr > todayStr;
+
+  var parts = dateStr.split('-');
+  var d = new Date(+parts[0], +parts[1]-1, +parts[2]);
+  document.getElementById('modal-date').textContent   = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('modal-prompt').textContent = isFuture ? 'Who will do the pickup?' : 'Who did the pickup?';
+
+  document.getElementById('recurring-wrap').style.display = isFuture ? 'block' : 'none';
+  document.getElementById('recurring-cb').checked = false;
+  document.getElementById('clear-btn').style.visibility = cache[dateStr] ? 'visible' : 'hidden';
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-bg').classList.remove('open');
+  modalDateStr = null;
+}
+
+function modalAssign(person) {
+  if (!modalDateStr) return;
+  var isFuture  = modalDateStr > todayStr;
+  var recurring = isFuture && document.getElementById('recurring-cb').checked;
+  closeModal();
+
+  if (!recurring) {
+    upsert(modalDateStr, person);
+    return;
+  }
+
+  // Build list of weekly dates up to 2 months out
+  var entries = [];
+  var maxDate = new Date(NOW.getFullYear(), NOW.getMonth() + 2, NOW.getDate());
+  var parts   = modalDateStr.split('-');
+  var cur     = new Date(+parts[0], +parts[1]-1, +parts[2]);
+  while (cur <= maxDate) {
+    entries.push({ date: toStr(cur), person: person });
+    cur.setDate(cur.getDate() + 7);
+  }
+  upsertMany(entries);
+}
+
+function modalClear() {
+  if (!modalDateStr) return;
+  closeModal();
+  remove(modalDateStr);
+}
+
+// ── Init ───────────────────────────────────────────────
+
+document.getElementById('prev-btn').addEventListener('click', function() {
+  if (--viewMonth < 0) { viewMonth = 11; viewYear--; }
+  renderCalendar();
+});
+document.getElementById('next-btn').addEventListener('click', function() {
+  if (++viewMonth > 11) { viewMonth = 0; viewYear++; }
+  renderCalendar();
+});
+
+document.getElementById('today-month').textContent = NOW.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+document.getElementById('today-day').textContent   = NOW.toLocaleDateString('en-US', { weekday:'long' });
+
+// fetchAll() is called by PIN unlock (or immediately if already unlocked this session)
+if (sessionStorage.getItem('pickup_auth') === '1') fetchAll();
+</script>
+
+</body>
+</html>
