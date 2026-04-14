@@ -666,6 +666,13 @@ function checkPin() {
   }
 }
 
+// Keyboard input for PIN
+document.addEventListener('keydown', function(e) {
+  if (document.getElementById('pin-overlay').classList.contains('hidden')) return;
+  if (e.key >= '0' && e.key <= '9') pinKey(e.key);
+  else if (e.key === 'Backspace') pinDel();
+});
+
 // Check if already unlocked this session
 if (sessionStorage.getItem('pickup_auth') === '1') {
   document.getElementById('pin-overlay').classList.add('hidden');
@@ -703,32 +710,30 @@ async function fetchAll() {
   setLoading(false);
   if (error) { showError(error.message); return; }
   cache = {};
-  data.forEach(function(row) { cache[row.date] = row.person; });
+  (data || []).forEach(function(row) { cache[row.date] = row.person; });
   renderCalendar();
 }
 
 async function upsert(dateStr, person) {
-  // Delete first (handles case where unique constraint isn't set)
   await db.from('pickups').delete().eq('date', dateStr);
   const { error } = await db.from('pickups').insert({ date: dateStr, person: person });
-  if (error) { showError(error.message); return; }
+  if (error) { showError(error.message); fetchAll(); return; }  // re-sync on failure
   cache[dateStr] = person;
   renderCalendar();
 }
 
 async function remove(dateStr) {
   const { error } = await db.from('pickups').delete().eq('date', dateStr);
-  if (error) { showError(error.message); return; }
+  if (error) { showError(error.message); fetchAll(); return; }  // re-sync on failure
   delete cache[dateStr];
   renderCalendar();
 }
 
 async function upsertMany(entries) {
-  // entries: [{ date, person }, ...]
   const dates = entries.map(function(e) { return e.date; });
   await db.from('pickups').delete().in('date', dates);
   const { error } = await db.from('pickups').insert(entries);
-  if (error) { showError(error.message); return; }
+  if (error) { showError(error.message); fetchAll(); return; }  // re-sync on failure
   entries.forEach(function(e) { cache[e.date] = e.person; });
   renderCalendar();
 }
@@ -741,9 +746,12 @@ function setLoading(on) {
 
 function showError(msg) {
   console.error('Supabase error:', msg);
-  // Surface briefly in the today-status area
-  var el = document.getElementById('today-status');
-  el.innerHTML = '<span style="color:#dc2626">Error: ' + msg + '</span>';
+  var el   = document.getElementById('today-status');
+  var span = document.createElement('span');
+  span.style.color = '#dc2626';
+  span.textContent = 'Error: ' + msg;
+  el.innerHTML = '';
+  el.appendChild(span);
   setTimeout(function() { refreshTodayStatus(); }, 4000);
 }
 
@@ -852,19 +860,20 @@ function closeModal() {
 
 function modalAssign(person) {
   if (!modalDateStr) return;
-  var isFuture  = modalDateStr > todayStr;
+  var dateStr   = modalDateStr;  // capture before closeModal() nulls it
+  var isFuture  = dateStr > todayStr;
   var recurring = isFuture && document.getElementById('recurring-cb').checked;
   closeModal();
 
   if (!recurring) {
-    upsert(modalDateStr, person);
+    upsert(dateStr, person);
     return;
   }
 
   // Build list of weekly dates up to 2 months out
   var entries = [];
   var maxDate = new Date(NOW.getFullYear(), NOW.getMonth() + 2, NOW.getDate());
-  var parts   = modalDateStr.split('-');
+  var parts   = dateStr.split('-');
   var cur     = new Date(+parts[0], +parts[1]-1, +parts[2]);
   while (cur <= maxDate) {
     entries.push({ date: toStr(cur), person: person });
@@ -875,8 +884,9 @@ function modalAssign(person) {
 
 function modalClear() {
   if (!modalDateStr) return;
+  var dateStr = modalDateStr;  // capture before closeModal() nulls it
   closeModal();
-  remove(modalDateStr);
+  remove(dateStr);
 }
 
 // ── Init ───────────────────────────────────────────────
